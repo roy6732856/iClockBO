@@ -1,22 +1,25 @@
 <template>
   <div class="side-menu">
+    <div class="logo">LOGO</div>
     <el-menu
       :default-active="activeMenu"
       class="menu-container"
       @select="handleSelect"
     >
-      <el-menu-item index="/dashboard">
-        <el-icon><HomeFilled /></el-icon>
-        <span>儀表板</span>
-      </el-menu-item>
-      <el-menu-item index="/users">
-        <el-icon><User /></el-icon>
-        <span>使用者管理</span>
-      </el-menu-item>
-      <el-menu-item index="/attendance">
-        <el-icon><Timer /></el-icon>
-        <span>打卡紀錄</span>
-      </el-menu-item>
+      <template v-slot:default>
+        <el-menu-item index="/dashboard">
+          <el-icon><HomeFilled /></el-icon>
+          <span>儀表板</span>
+        </el-menu-item>
+        <el-menu-item index="/users">
+          <el-icon><User /></el-icon>
+          <span>使用者管理</span>
+        </el-menu-item>
+        <el-menu-item index="/attendance">
+          <el-icon><Timer /></el-icon>
+          <span>打卡紀錄</span>
+        </el-menu-item>
+      </template>
     </el-menu>
   </div>
 </template>
@@ -58,5 +61,12 @@ export default {
 
 .menu-container {
   border-right: none;
+}
+
+.logo {
+  padding: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
 }
 </style> 

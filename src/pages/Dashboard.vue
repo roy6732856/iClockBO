@@ -1,37 +1,46 @@
 <template>
   <div class="dashboard">
     <h2>儀表板</h2>
+    <div>
+      <el-input v-model="companyFilter" placeholder="搜尋公司"></el-input>
+      <el-button @click="filterCompanies">搜尋</el-button>
+    </div>
     <div class="dashboard-stats">
-      <div class="stat-card">
-        <h3>今日出勤</h3>
-        <p>{{ dashboardData.todayAttendance }}/{{ dashboardData.totalEmployees }}</p>
-      </div>
-      <div class="stat-card">
-        <h3>遲到人數</h3>
-        <p>{{ dashboardData.lateToday }}</p>
-      </div>
-      <div class="stat-card">
-        <h3>請假人數</h3>
-        <p>{{ dashboardData.leaveToday }}</p>
+      <div v-for="company in filteredCompanies" :key="company.id" class="stat-card">
+        <h3>{{ company.name }}</h3>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mockUserCompanies } from '../mock/mockData';
+
 export default {
   name: 'DashboardPage',
   data() {
     return {
-      dashboardData: {
-        todayAttendance: 45,
-        totalEmployees: 50,
-        lateToday: 2,
-        leaveToday: 3
-      }
-    }
-  }
-}
+      companyFilter: '',
+      companies: [],
+    };
+  },
+  computed: {
+    filteredCompanies() {
+      return this.companies.filter(company => 
+        company.name.includes(this.companyFilter)
+      );
+    },
+  },
+  methods: {
+    filterCompanies() {
+      const userType = localStorage.getItem('username') === 'admin' ? 'admin' : 'manage';
+      this.companies = mockUserCompanies[userType];
+    },
+  },
+  created() {
+    this.filterCompanies(); // 初始化時過濾公司
+  },
+};
 </script>
 
 <style scoped>

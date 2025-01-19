@@ -28,8 +28,14 @@ export default {
   },
   methods: {
     handleLogin() {
-      // 暫時只進行路由跳轉
-      this.$router.push('/dashboard')
+      // 登入邏輯
+      if ((this.username === 'admin' && this.password === 'abc123') || 
+          (this.username === 'manage' && this.password === 'abc123')) {
+        localStorage.setItem('username', this.username) // 儲存用戶名
+        this.$router.push('/dashboard') // 登入成功後跳轉到儀表板
+      } else {
+        alert('帳號或密碼錯誤')
+      }
     }
   }
 }
