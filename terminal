@@ -1,0 +1,16 @@
+src/
+  ├── components/
+  │   ├── Layout/
+  │   │   ├── TopMenu.js
+  │   │   └── SideMenu.js
+  │   └── common/
+  ├── pages/
+  │   ├── Dashboard/
+  │   ├── UserManagement/
+  │   ├── AttendanceRecord/
+  │   └── Login/
+  ├── services/
+  │   └── api.js
+  ├── mock/
+  │   └── mockData.js
+  └── App.js 
