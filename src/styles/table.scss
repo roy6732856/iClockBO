@@ -1,0 +1,19 @@
+@import './variables.scss';
+
+.table-card {
+  margin-bottom: $spacing-lg;
+
+  :deep(.el-card__body) {
+    padding: 0;
+  }
+
+  :deep(.el-table) {
+    margin: $spacing-md;
+  }
+}
+
+.pagination-container {
+  margin-top: $spacing-lg;
+  display: flex;
+  justify-content: flex-end;
+} 

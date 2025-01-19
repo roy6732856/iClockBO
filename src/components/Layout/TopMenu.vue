@@ -1,6 +1,6 @@
 <template>
     <header class="top-menu">
-      <div class="logo">打卡系統</div>
+      <div class="logo">愛打卡 - iClock</div>
       <div class="user-info">
         <el-dropdown>
           <span class="el-dropdown-link">

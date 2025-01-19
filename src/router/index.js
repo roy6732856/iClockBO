@@ -1,20 +1,31 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Dashboard from '../pages/Dashboard.vue';
-import UserManagement from '../pages/UserManagement.vue';
-import AttendanceRecord from '../pages/AttendanceRecord.vue';
-import Login from '../pages/Login.vue';
 
 const routes = [
-  { path: '/dashboard', component: Dashboard },
-  { path: '/users', component: UserManagement },
-  { path: '/attendance', component: AttendanceRecord },
-  { path: '/login', component: Login },
-  { path: '/', redirect: '/dashboard' } // 預設路由
+  {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/pages/Login/index.vue')
+  },
+  {
+    path: '/dashboard',
+    name: 'Dashboard',
+    component: () => import('@/pages/Dashboard/index.vue')
+  },
+  {
+    path: '/users/company',
+    name: 'CompanyUsers',
+    component: () => import('@/pages/UserManagement/index.vue')
+  },
+  {
+    path: '/attendance/records',
+    name: 'AttendanceRecords',
+    component: () => import('@/pages/AttendanceRecord/index.vue')
+  }
 ];
 
 const router = createRouter({
   history: createWebHistory(),
-  routes,
+  routes
 });
 
 export default router; 

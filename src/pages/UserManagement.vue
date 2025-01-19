@@ -1,42 +1,67 @@
 <template>
   <div class="user-management">
-    <h2>使用者管理</h2>
-    <!-- 只有管理員可以看到公司選擇器 -->
-    <div v-if="isAdmin" class="filter-section">
-      <el-select v-model="selectedCompany" placeholder="請選擇公司" @change="filterCompanies">
-        <el-option
-          v-for="company in availableCompanies"
-          :key="company.id"
-          :label="company.name"
-          :value="company.id"
+    <div class="page-header">
+      <h2>使用者管理</h2>
+      <div class="filter-section" v-if="isAdmin">
+        <el-select
+          v-model="selectedCompany"
+          placeholder="請選擇公司"
+          @change="filterCompanies"
+          class="filter-select"
+        >
+          <el-option
+            v-for="company in availableCompanies"
+            :key="company.id"
+            :label="company.name"
+            :value="company.id"
+          />
+        </el-select>
+        <el-button type="primary" @click="filterCompanies">搜尋</el-button>
+      </div>
+    </div>
+
+    <el-card class="table-card">
+      <el-table
+        :data="filteredUsers"
+        style="width: 100%"
+        :border="true"
+        stripe
+        max-height="600px"
+      >
+        <el-table-column prop="id" label="ID" width="80" />
+        <el-table-column prop="name" label="姓名" width="120" />
+        <el-table-column prop="email" label="信箱" width="200" />
+        <el-table-column prop="department" label="部門" width="120" />
+        <el-table-column prop="role" label="角色" width="120" />
+        <el-table-column prop="company" label="公司" width="120" />
+        <el-table-column label="操作" width="150">
+          <template #default="scope">
+            <el-button 
+              type="primary"
+              size="small" 
+              @click="handleEdit(scope.row)"
+            >編輯</el-button>
+            <el-button
+              type="danger"
+              size="small"
+              @click="handleDelete(scope.row)"
+            >刪除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <div class="pagination-container">
+        <el-pagination
+          v-model:current-page="currentPage"
+          v-model:page-size="pageSize"
+          :page-sizes="[10, 20, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totalUsers"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
         />
-      </el-select>
-      <el-button @click="filterCompanies">搜尋</el-button>
-    </div>
-    <div class="user-list">
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>姓名</th>
-            <th>信箱</th>
-            <th>部門</th>
-            <th>角色</th>
-            <th>公司</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="user in filteredUsers" :key="user.id">
-            <td>{{ user.id }}</td>
-            <td>{{ user.name }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.department }}</td>
-            <td>{{ user.role }}</td>
-            <td>{{ user.company }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      </div>
+    </el-card>
   </div>
 </template>
 
@@ -51,6 +76,9 @@ export default {
       users: mockUsers,
       filteredUsers: [],
       availableCompanies: [],
+      currentPage: 1,
+      pageSize: 10,
+      totalUsers: 0,
     };
   },
   computed: {
@@ -63,22 +91,40 @@ export default {
       const userType = this.isAdmin ? 'admin' : 'manage';
       this.availableCompanies = mockUserCompanies[userType];
       
+      let filtered = [];
       if (this.isAdmin && this.selectedCompany) {
-        // 管理員可以按公司篩選
         const selectedCompanyName = this.availableCompanies.find(
           c => c.id === this.selectedCompany
         )?.name;
-        this.filteredUsers = this.users.filter(
+        filtered = this.users.filter(
           user => user.company === selectedCompanyName
         );
       } else {
-        // 非管理員只能看到自己公司的資料
         const userCompany = mockUserCompanies.manage[0].name;
-        this.filteredUsers = this.users.filter(
+        filtered = this.users.filter(
           user => user.company === userCompany
         );
       }
+      
+      this.totalUsers = filtered.length;
+      const start = (this.currentPage - 1) * this.pageSize;
+      const end = start + this.pageSize;
+      this.filteredUsers = filtered.slice(start, end);
     },
+    handleSizeChange(val) {
+      this.pageSize = val;
+      this.filterCompanies();
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.filterCompanies();
+    },
+    handleEdit(row) {
+      console.log('Edit:', row);
+    },
+    handleDelete(row) {
+      console.log('Delete:', row);
+    }
   },
   created() {
     this.filterCompanies();
@@ -88,28 +134,46 @@ export default {
 
 <style scoped>
 .user-management {
-  padding: 20px;
+  padding: 24px;
+}
+
+.page-header {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .filter-section {
-  margin-bottom: 20px;
   display: flex;
-  gap: 10px;
+  gap: 16px;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
+.filter-select {
+  width: 200px;
+}
+
+.table-card {
+  margin-bottom: 24px;
+}
+
+.pagination-container {
   margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
 }
 
-th, td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
+:deep(.el-card__body) {
+  padding: 0;
 }
 
-th {
-  background-color: #f5f5f5;
+:deep(.el-table) {
+  margin: 16px;
+}
+
+h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #1f2f3d;
 }
 </style> 

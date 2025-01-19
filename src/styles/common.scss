@@ -1,0 +1,35 @@
+@import './variables.scss';
+
+// 間距變量
+$spacing-xs: 4px;
+$spacing-sm: 8px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+// 通用樣式
+.page-container {
+  padding: $spacing-lg;
+}
+
+.page-header {
+  margin-bottom: $spacing-lg;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h2 {
+    margin: 0;
+    font-size: 24px;
+    color: $text-color;
+  }
+}
+
+.filter-section {
+  display: flex;
+  gap: $spacing-md;
+}
+
+.filter-select {
+  width: 200px;
+} 

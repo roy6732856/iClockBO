@@ -1,39 +1,66 @@
 <template>
   <div class="attendance-record">
-    <h2>打卡紀錄</h2>
-    <div v-if="isAdmin" class="filter-section">
-      <el-select v-model="selectedCompany" placeholder="請選擇公司" @change="filterCompanies">
-        <el-option
-          v-for="company in availableCompanies"
-          :key="company.id"
-          :label="company.name"
-          :value="company.id"
+    <div class="page-header">
+      <h2>打卡紀錄</h2>
+      <div class="filter-section" v-if="isAdmin">
+        <el-select
+          v-model="selectedCompany"
+          placeholder="請選擇公司"
+          @change="filterCompanies"
+          class="filter-select"
+        >
+          <el-option
+            v-for="company in availableCompanies"
+            :key="company.id"
+            :label="company.name"
+            :value="company.id"
+          />
+        </el-select>
+        <el-date-picker
+          v-model="dateRange"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="開始日期"
+          end-placeholder="結束日期"
+          class="date-picker"
         />
-      </el-select>
-      <el-button @click="filterCompanies">搜尋</el-button>
+        <el-button type="primary" @click="filterCompanies">搜尋</el-button>
+      </div>
     </div>
-    <div class="record-list">
-      <table>
-        <thead>
-          <tr>
-            <th>員工姓名</th>
-            <th>公司</th>
-            <th>打卡時間</th>
-            <th>下班時間</th>
-            <th>狀態</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="record in filteredRecords" :key="record.id">
-            <td>{{ record.userName }}</td>
-            <td>{{ record.company }}</td>
-            <td>{{ record.checkInTime }}</td>
-            <td>{{ record.checkOutTime }}</td>
-            <td>{{ record.status }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+
+    <el-card class="table-card">
+      <el-table
+        :data="filteredRecords"
+        style="width: 100%"
+        :border="true"
+        stripe
+        max-height="600px"
+      >
+        <el-table-column prop="userName" label="員工姓名" width="120" />
+        <el-table-column prop="company" label="公司" width="120" />
+        <el-table-column prop="checkInTime" label="打卡時間" width="180" />
+        <el-table-column prop="checkOutTime" label="下班時間" width="180" />
+        <el-table-column prop="status" label="狀態" width="100">
+          <template #default="scope">
+            <el-tag
+              :type="scope.row.status === '正常' ? 'success' : 'warning'"
+            >{{ scope.row.status }}</el-tag>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <div class="pagination-container">
+        <el-pagination
+          v-model:current-page="currentPage"
+          v-model:page-size="pageSize"
+          :page-sizes="[10, 20, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totalRecords"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
+    </el-card>
   </div>
 </template>
 
@@ -52,6 +79,10 @@ export default {
       ],
       filteredRecords: [],
       availableCompanies: [],
+      dateRange: [],
+      currentPage: 1,
+      pageSize: 10,
+      totalRecords: 0,
     };
   },
   computed: {
@@ -77,6 +108,19 @@ export default {
           record => record.company === userCompany
         );
       }
+      
+      this.totalRecords = this.filteredRecords.length;
+      const start = (this.currentPage - 1) * this.pageSize;
+      const end = start + this.pageSize;
+      this.filteredRecords = this.filteredRecords.slice(start, end);
+    },
+    handleSizeChange(val) {
+      this.pageSize = val;
+      this.filterCompanies();
+    },
+    handleCurrentChange(val) {
+      this.currentPage = val;
+      this.filterCompanies();
     },
   },
   created() {
@@ -87,28 +131,52 @@ export default {
 
 <style scoped>
 .attendance-record {
-  padding: 20px;
+  padding: 24px;
+}
+
+.page-header {
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .filter-section {
-  margin-bottom: 20px;
   display: flex;
-  gap: 10px;
+  gap: 16px;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
+.filter-select {
+  width: 200px;
+}
+
+.date-picker {
+  width: 300px;
+}
+
+.table-card {
+  margin-bottom: 24px;
+  height: calc(100% - 100px);
+}
+
+.pagination-container {
   margin-top: 20px;
+  display: flex;
+  justify-content: flex-end;
 }
 
-th, td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
+:deep(.el-card__body) {
+  padding: 0;
 }
 
-th {
-  background-color: #f5f5f5;
+:deep(.el-table) {
+  margin: 16px;
+  height: 100%;
+}
+
+h2 {
+  margin: 0;
+  font-size: 24px;
+  color: #1f2f3d;
 }
 </style> 
