@@ -95,17 +95,79 @@ export default {
 @import '@/styles/common.scss';
 @import '@/styles/table.scss';
 
-.search-input {
-  width: 200px;
+.page-header {
+  margin-bottom: $spacing-lg;
+
+  h2 {
+    margin-bottom: $spacing-md;
+  }
 }
 
-.table-container {
-  padding: $spacing-lg;
+.filter-section {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+  margin-bottom: $spacing-md;
+
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    
+    .filter-select,
+    .search-input,
+    .el-button {
+      width: 100%;
+    }
+  }
+}
+
+.filter-select,
+.search-input {
+  width: 200px;
+
+  @media screen and (max-width: 768px) {
+    width: 100%;
+  }
+}
+
+.table-responsive {
+  overflow-x: auto;
+  margin: 0 -#{$spacing-lg};
+  padding: 0 $spacing-lg;
+
+  .el-table {
+    min-width: 900px; // 設置最小寬度，確保在小螢幕上可以滾動
+  }
 }
 
 .pagination-container {
-  padding: $spacing-md $spacing-lg;
+  padding: $spacing-md;
   display: flex;
   justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+
+  @media screen and (max-width: 768px) {
+    justify-content: center;
+  }
+}
+
+.empty-state {
+  margin-top: $spacing-xl;
+  text-align: center;
+}
+
+// 調整表格在小螢幕上的顯示
+@media screen and (max-width: 768px) {
+  :deep(.el-table) {
+    .cell {
+      padding: 8px;
+    }
+  }
+
+  :deep(.el-pagination) {
+    .el-pagination__sizes {
+      margin-right: 0;
+    }
+  }
 }
 </style> 

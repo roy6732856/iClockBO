@@ -5,13 +5,30 @@
       <form @submit.prevent="handleLogin">
         <div class="form-group">
           <label>帳號</label>
-          <input type="text" v-model="username" placeholder="請輸入帳號">
+          <el-input 
+            v-model="username" 
+            placeholder="請輸入帳號"
+            :disabled="loading"
+          />
         </div>
         <div class="form-group">
           <label>密碼</label>
-          <input type="password" v-model="password" placeholder="請輸入密碼">
+          <el-input 
+            v-model="password" 
+            type="password" 
+            placeholder="請輸入密碼"
+            :disabled="loading"
+            show-password
+          />
         </div>
-        <button type="submit">登入</button>
+        <el-button 
+          type="primary" 
+          native-type="submit"
+          :loading="loading"
+          class="login-button"
+        >
+          登入
+        </el-button>
       </form>
     </div>
   </div>

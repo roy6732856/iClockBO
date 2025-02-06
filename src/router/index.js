@@ -28,4 +28,22 @@ const router = createRouter({
   routes
 });
 
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token');
+  
+  if (to.path === '/login') {
+    if (token) {
+      next('/dashboard');
+    } else {
+      next();
+    }
+  } else {
+    if (!token) {
+      next('/login');
+    } else {
+      next();
+    }
+  }
+});
+
 export default router; 
